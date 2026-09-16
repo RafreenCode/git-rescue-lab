@@ -1,17 +1,17 @@
-# Git Workflow Notes
+# Git Workflow
 
-## Bisect Finding
+## What bisect found
 
-`c99fb4209e6fb6e5ed2789893fdb2f893d61d6c6` introduced the regression by changing the `BULK20` condition from `items.length >= 5` to `items.length > 5`, so five-item orders stopped receiving the discount.
+The bad commit was `c99fb4209e6fb6e5ed2789893fdb2f893d61d6c6`. It changed the `BULK20` check from `items.length >= 5` to `items.length > 5`, which meant an order with exactly five items no longer got the discount.
 
-## Branching Strategy
+## Branching choice
 
-For a team of four, I would recommend GitHub Flow: keep `main` deployable, use short-lived feature branches, and merge through pull requests with review and CI. It provides enough isolation for parallel work without the release-branch overhead of Git Flow, while staying more structured than committing directly to trunk.
+For a team of four, I would use GitHub Flow. Each person can work on a short-lived branch, then open a pull request for review and CI before merging into `main`. Git Flow seems like more process than this small team needs, while committing straight to trunk would make unfinished work harder to manage.
 
-## Removing Secrets From History
+## The old secret
 
-Removing `.env` from tracking and ignoring it prevents future commits from containing the file, but the old credentials remain in existing commits. To remove them completely, I would use a history-rewriting tool such as `git filter-repo` or BFG Repo-Cleaner, replace the credentials, and force-push the rewritten branches and tags after coordinating with every clone. This assignment does not require that step because it uses fake credentials and is specifically teaching removal from the current tracked state while preserving the exercise history.
+Ignoring `.env` and removing it from tracking keeps it out of future commits, but it is still in the old commits. To really remove it, I would rewrite the repository history with something like `git filter-repo` or BFG, replace the credentials, and force-push the rewritten branches and tags. Everyone with a clone would need to coordinate that change. This assignment does not require it because the credentials are fake and the point here is to practice stopping the file from being tracked.
 
-## Rewriting Commit History
+## Rewriting a commit
 
-Rewording was acceptable because the commits were still local and no teammates had pulled them. Rewriting a commit already pulled by teammates would change its hash and make their clones diverge, requiring a coordinated force-push and recovery work, so a new corrective commit is safer in that situation.
+Rewording the commit was okay because it was still local and nobody else had pulled it. Once teammates have pulled a commit, changing it gives it a new hash and makes their branches diverge. In that case, I would leave the old commit alone and add a new commit instead of making everyone deal with a force-push.
